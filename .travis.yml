@@ -2,15 +2,19 @@
 # in this file, please see the Travis CI documentation:
 # https://docs.travis-ci.com
 
+before_install:
+- openssl aes-256-cbc -K $encrypted_e95fcac9a2dd_key -iv $encrypted_e95fcac9a2dd_iv
+  -in travis.enc -out travis -d
+
 after_success:
   - |
 
       # Automatically update the content from the `dist/` directory
 
       $(npm bin)/travis-after-all \
-        && $(npm bin)/set-up-ssh -k "$encrypted_7289798db853_key" \
-                                 -iv "$encrypted_7289798db853_iv" \
-                                 --path-encrypted-key ".travis/github_deploy_key.enc" \
+        && $(npm bin)/set-up-ssh -k "$encrypted_e95fcac9a2dd_key" \
+                                 -iv "$encrypted_e95fcac9a2dd_iv" \
+                                 --path-encrypted-key ".travis/travis.enc" \
         && $(npm bin)/commit-changes --branch "master" \
                                      --commands "npm run build" \
                                      --commit-message "Update content from the \`dist\` directory [skip ci]"
